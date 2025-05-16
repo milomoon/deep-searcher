@@ -1,51 +1,47 @@
+from functools import cached_property
 from typing import List, Union
 
 from deepsearcher.embedding.base import BaseEmbedding
 
-OLLAMA_MODEL_DIM_MAP = {
-    "bge-m3": 1024,
-    "mxbai-embed-large": 768,
-    "nomic-embed-text": 768,
+SENTENCE_TRANSFORMER_MODEL_DIM_MAP = {
+    "BAAI/bge-m3": 1024,
+    "BAAI/bge-large-zh-v1.5": 1024,
+    "BAAI/bge-large-en-v1.5": 1024,
 }
 
 
-class OllamaEmbedding(BaseEmbedding):
+class SentenceTransformerEmbedding(BaseEmbedding):
     """
-    Ollama embedding model implementation.
+    SentenceTransformer embedding model implementation.
 
-    This class provides an interface to the Ollama embedding API, which offers
+    This class provides an interface to the SentenceTransformer embedding API, which offers
     various embedding models for text processing.
+
+    For more information, see:
+    https://www.sbert.net/docs/sentence_transformer/pretrained_models.html
     """
 
-    def __init__(self, model="bge-m3", batch_size=32, **kwargs):
+    def __init__(self, model="BAAI/bge-m3", batch_size=32, **kwargs):
         """
-        Initialize the Ollama embedding model.
+        Initialize the SentenceTransformer embedding model.
 
         Args:
-            model (str): The model identifier to use for embeddings. Default is "bge-m3".
+            model (str): The model identifier to use for embeddings. Default is "BAAI/bge-m3".
+            batch_size (int): Maximum number of texts to process in a single batch. Default is 32.
             **kwargs: Additional keyword arguments.
-                - base_url (str, optional): The base URL for the Ollama API. If not provided,
-                  defaults to "http://localhost:11434".
                 - model_name (str, optional): Alternative way to specify the model.
-                - dimension (int, optional): The dimension of the embedding vectors.
-                  If not provided, the default dimension for the model will be used.
-        """
-        from ollama import Client
 
-        if "model_name" in kwargs and (not model or model == "bge-m3"):
+        Raises:
+            RuntimeError: If no API key is provided or found in environment variables.
+        """
+        from sentence_transformers import SentenceTransformer
+
+        if "model_name" in kwargs and (not model or model == "BAAI/bge-m3"):
             model = kwargs.pop("model_name")
         self.model = model
-        if "base_url" in kwargs:
-            base_url = kwargs.pop("base_url")
-        else:
-            base_url = "http://localhost:11434/"
 
-        if "dimension" in kwargs:
-            dimension = kwargs.pop("dimension")
-        else:
-            dimension = OLLAMA_MODEL_DIM_MAP[model]
-        self.dim = dimension
-        self.client = Client(host=base_url, **kwargs)
+        self.client = SentenceTransformer(model)
+
         self.batch_size = batch_size
 
     def embed_query(self, text: str) -> List[float]:
@@ -103,10 +99,13 @@ class OllamaEmbedding(BaseEmbedding):
         Raises:
             HTTPError: If the API request fails.
         """
-        response = self.client.embed(model=self.model, input=input)
-        return response["embeddings"]
+        embeddings = self.client.encode(input)
+        from deepsearcher.utils import log
 
-    @property
+        log.dev_logger.info(f"embeddings: {embeddings}")
+        return embeddings.tolist()
+
+    @cached_property
     def dimension(self) -> int:
         """
         Get the dimensionality of the embeddings for the current model.
@@ -114,4 +113,4 @@ class OllamaEmbedding(BaseEmbedding):
         Returns:
             int: The number of dimensions in the embedding vectors.
         """
-        return self.dim
+        return SENTENCE_TRANSFORMER_MODEL_DIM_MAP[self.model]
