@@ -10,7 +10,7 @@
 
 ---
 
-DeepSearcher combines cutting-edge LLMs (OpenAI o3, Qwen3, DeepSeek, Grok 3, Claude 3.7 Sonnet, Llama 4, QwQ, etc.) and Vector Databases (Milvus, Zilliz Cloud etc.) to perform search, evaluation, and reasoning based on private data, providing highly accurate answer and comprehensive report. This project is suitable for enterprise knowledge management, intelligent Q&A systems, and information retrieval scenarios.
+DeepSearcher combines cutting-edge LLMs (OpenAI o3, Qwen3, DeepSeek, Grok 3, Claude 4 Sonnet, Llama 4, QwQ, etc.) and Vector Databases (Milvus, Zilliz Cloud etc.) to perform search, evaluation, and reasoning based on private data, providing highly accurate answer and comprehensive report. This project is suitable for enterprise knowledge management, intelligent Q&A systems, and information retrieval scenarios.
 
 ![Architecture](./assets/pic/deep-searcher-arch.png)
 
@@ -154,7 +154,7 @@ result = query("Write a report about xxx.") # Your question here
 <details>
   <summary>Example (Claude)</summary>
     <p> Make sure you have prepared your ANTHROPIC API KEY as an env variable <code>ANTHROPIC_API_KEY</code>.</p>
-    <pre><code>config.set_provider_config("llm", "Anthropic", {"model": "claude-3-7-sonnet-latest"})</code></pre>
+    <pre><code>config.set_provider_config("llm", "Anthropic", {"model": "claude-sonnet-4-0"})</code></pre>
     <p> More details about Anthropic Claude: https://docs.anthropic.com/en/home </p>
 </details>
 
@@ -301,6 +301,12 @@ result = query("Write a report about xxx.") # Your question here
     <p> More details about PPIO: https://ppinfra.com/docs/get-started/quickstart.html?utm_source=github_deep-searcher </p>
 </details>
 
+
+<details>
+  <summary>Example (FastEmbed embedding)</summary>
+    <pre><code>config.set_provider_config("embedding", "FastEmbedEmbedding", {"model": "intfloat/multilingual-e5-large"})</code></pre>
+    <p> You need to install fastembed before running, execute: <code>pip install fastembed</code>. More details about fastembed: https://github.com/qdrant/fastembed </p>
+</details>
 
 #### Vector Database Configuration
 <pre><code>config.set_provider_config("vector_db", "(VectorDBName)", "(Arguments dict)")</code></pre>
@@ -479,7 +485,7 @@ Click on the button "Try it out", it allows you to fill the parameters and direc
 **Q1**: Why I failed to parse LLM output format / How to select the LLM?
 
 
-**A1**: Small LLMs struggle to follow the prompt to generate a desired response, which usually cause the format parsing problem. A better practice is to use large reasoning models e.g. deepseek-r1 671b, OpenAI o-series, Claude 3.7 sonnet, etc. as your LLM. 
+**A1**: Small LLMs struggle to follow the prompt to generate a desired response, which usually cause the format parsing problem. A better practice is to use large reasoning models e.g. deepseek-r1 671b, OpenAI o-series, Claude 4 sonnet, etc. as your LLM. 
 
 ---
 

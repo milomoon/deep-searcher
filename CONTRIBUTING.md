@@ -102,6 +102,53 @@ Syncing the environment manually is especially useful for ensuring your editor h
 For more detailed information about dependency locking and syncing, refer to the [offical Locking and syncing documentation](https://docs.astral.sh/uv/concepts/projects/sync/).
 
 
+## Running Tests
+
+Before submitting your pull request, make sure to run the test suite to ensure your changes haven't introduced any regressions.
+
+### Installing Test Dependencies
+
+First, ensure you have pytest installed. If you haven't installed the development dependencies yet, you can do so with:
+
+```shell
+uv sync --all-extras --dev
+```
+
+This will install all development dependencies and optional dependencies including pytest and other testing tools.
+
+### Running the Tests
+
+To run all tests in the `tests` directory:
+
+```shell
+uv run pytest tests
+```
+
+For more verbose output that shows individual test results:
+
+```shell
+uv run pytest tests -v
+```
+
+You can also run tests for specific directories or files. For example:
+
+```shell
+# Run tests in a specific directory
+uv run pytest tests/embedding
+
+# Run tests in a specific file
+uv run pytest tests/embedding/test_bedrock_embedding.py
+
+# Run a specific test class
+uv run pytest tests/embedding/test_bedrock_embedding.py::TestBedrockEmbedding
+
+# Run a specific test method
+uv run pytest tests/embedding/test_bedrock_embedding.py::TestBedrockEmbedding::test_init_default
+```
+
+The `-v` flag (verbose mode) provides more detailed output, showing each test case and its result individually. This is particularly useful when you want to see which specific tests are passing or failing.
+
+
 ## Developer Certificate of Origin (DCO)
 
 All contributions require a sign-off, acknowledging the [Developer Certificate of Origin](https://developercertificate.org/). 
